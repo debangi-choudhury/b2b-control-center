@@ -12,7 +12,7 @@ This is a Logixal demo app (B2B-C15). It only reads: it never approves, retries 
 | Organization requests | VTEX's native requests still pending | `vtex.b2b-organizations-graphql` `getOrganizationRequests` |
 | Problem orders | B2B orders in a workflow error or retry, or open and unchanged for too long | OMS order list, filtered by organization |
 | Quotes | Quotes waiting for the seller (`pending`, `revised`) or the buyer (`ready`, not expired) | B2B Quotes' Master Data entity `quotes` |
-| Credit holds | Empty until B2B-041 exists | — |
+| Credit holds | Orders held for going over the customer's credit limit. Empty until credit limit checking is set up | — |
 
 The onboarding panel is read by the Admin page itself, with the admin's session, as B2B-C11's review queue does: VTEX IO only lets one app call another app's GraphQL when the target declares a policy, and `b2b-onboarding` declares none. The other panels come from this app's GraphQL queries, one per panel, so a failing source only blanks its own panel.
 

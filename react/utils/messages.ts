@@ -76,7 +76,7 @@ export const messages = defineMessages({
   },
   tileComingSoon: {
     id: 'admin/b2b-control-center.tile.coming-soon',
-    defaultMessage: 'Coming with B2B-041',
+    defaultMessage: 'Credit check not set up yet',
   },
 
   onboardingTitle: {
@@ -142,7 +142,7 @@ export const messages = defineMessages({
   creditUnavailable: {
     id: 'admin/b2b-control-center.credit.unavailable',
     defaultMessage:
-      'Credit hold checking (B2B-041) is not installed yet. Held orders will be listed here once it is.',
+      "Credit limit checking isn't set up yet. Once orders are checked against each customer's credit limit, orders held for going over it will be listed here.",
   },
   allOrganizationsNote: {
     id: 'admin/b2b-control-center.all-organizations-note',

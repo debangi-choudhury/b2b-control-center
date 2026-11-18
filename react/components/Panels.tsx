@@ -235,7 +235,10 @@ export function ProblemOrdersPanel({
                       style: 'currency',
                       currency: order.currencyCode,
                     })
-                  : intl.formatNumber(total, { minimumFractionDigits: 2 })}
+                  : intl.formatNumber(total, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
               </Cell>
             </tr>
           )
@@ -291,7 +294,11 @@ export function QuotesPanel({
 
           return (
             <tr key={quote.id} className="bb b--muted-5">
-              <Cell>{quote.referenceName ?? quote.id}</Cell>
+              <Cell>
+                {/* || on purpose: some quotes have an empty name */}
+                {/* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */}
+                {quote.referenceName || quote.id}
+              </Cell>
               <Cell>
                 {quote.organizationName ?? quote.organizationId ?? '—'}
               </Cell>
@@ -326,7 +333,10 @@ export function QuotesPanel({
               <Cell>
                 {subtotal === null
                   ? '—'
-                  : intl.formatNumber(subtotal, { minimumFractionDigits: 2 })}
+                  : intl.formatNumber(subtotal, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
               </Cell>
               <Cell>
                 <RowLink href={quoteLink(quote.id)} newTab>
@@ -393,6 +403,7 @@ export function CreditHoldsPanel({
             <Cell>
               {intl.formatNumber(fromCents(hold.amount) ?? 0, {
                 minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
               })}
             </Cell>
           </tr>

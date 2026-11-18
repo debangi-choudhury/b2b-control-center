@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-18
+
+### Fixed
+
+- Quote and credit hold amounts always show two decimals; some older quotes store fractional amounts that showed as "0.042".
+- A quote with an empty name shows its ID instead of a blank cell.
+
+### Changed
+
+- The credit holds panel describes the missing credit limit check in plain words instead of naming an internal task code.
+
 ## [0.1.0] - 2026-11-18
 
 ### Added
