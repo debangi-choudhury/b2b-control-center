@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Alert, PageBlock, Spinner, Tag } from 'vtex.styleguide'
+import { Alert, PageBlock, Pagination, Spinner, Tag } from 'vtex.styleguide'
 
-import { ageOf } from '../utils/panels'
+import { ageOf, pageOf } from '../utils/panels'
 import { messages } from '../utils/messages'
 
 interface PanelFrameProps {
@@ -17,10 +17,14 @@ interface PanelFrameProps {
   notes?: ReactNode[]
   /** Shown instead of "Nothing waiting" when the panel has nothing to show */
   emptyText?: ReactNode
-  /** Rows shown and the full count, for "Showing the 50 oldest of 221" */
+  /** Rows the panel holds and the full count, for "Listing the 500 oldest of 900" */
   shown?: number
   total?: number
   truncated?: boolean
+  /** The pager under the table */
+  footer?: ReactNode
+  /** Count tags beside the title, such as "Workflow errors 0" */
+  chips?: Array<{ label: string; type: 'error' | 'warning' | 'neutral' }>
   children?: ReactNode
 }
 
@@ -37,17 +41,34 @@ export function PanelFrame({
   shown,
   total,
   truncated,
+  footer,
+  chips = [],
   children,
 }: PanelFrameProps) {
   const intl = useIntl()
 
   return (
-    <section id={id} aria-labelledby={`${id}-title`}>
+    <section id={id} role="tabpanel" aria-labelledby={`${id}-tab`}>
       <PageBlock
         title={<span id={`${id}-title`}>{title}</span>}
         subtitle={subtitle}
         variation="full"
       >
+        {chips.length > 0 && (
+          <div className="flex flex-wrap mb4" style={{ gap: 8 }}>
+            {chips.map((chip) => (
+              <Tag
+                key={chip.label}
+                type={chip.type}
+                variation="low"
+                size="small"
+              >
+                {chip.label}
+              </Tag>
+            ))}
+          </div>
+        )}
+
         {notes.filter(Boolean).map((note, i) => (
           <p key={i} className="t-small c-muted-1 mt0 mb3">
             {note}
@@ -75,6 +96,7 @@ export function PanelFrame({
         {!error && !loading && !isEmpty && (
           <>
             <div className="overflow-x-auto">{children}</div>
+            {footer && <div className="mt4">{footer}</div>}
             {typeof shown === 'number' &&
               typeof total === 'number' &&
               shown < total && (
@@ -93,6 +115,46 @@ export function PanelFrame({
       </PageBlock>
     </section>
   )
+}
+
+const ROWS_OPTIONS = [10, 25, 50]
+
+/**
+ * Pages a panel's rows in the browser, 10 at a time. The server sends every
+ * waiting item (up to 500 per panel), so the pager covers the whole list.
+ * Goes back to the first page whenever the list changes, such as after a
+ * filter or a refresh.
+ */
+export function usePaged<T>(items: T[]) {
+  const intl = useIntl()
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(ROWS_OPTIONS[0])
+
+  useEffect(() => setPage(0), [items])
+
+  const slice = pageOf(items.length, page, pageSize)
+  const pageItems = items.slice(slice.start, slice.end)
+
+  const pager =
+    items.length > ROWS_OPTIONS[0] ? (
+      <Pagination
+        rowsOptions={ROWS_OPTIONS}
+        selectedOption={pageSize}
+        currentItemFrom={slice.start + 1}
+        currentItemTo={slice.end}
+        totalItems={items.length}
+        textOf={intl.formatMessage(messages.paginationOf)}
+        textShowRows={intl.formatMessage(messages.paginationRows)}
+        onRowsChange={(_: unknown, value: string) => {
+          setPageSize(Number(value))
+          setPage(0)
+        }}
+        onNextClick={() => setPage(Math.min(slice.page + 1, slice.pages - 1))}
+        onPrevClick={() => setPage(Math.max(slice.page - 1, 0))}
+      />
+    ) : null
+
+  return { pageItems, pager }
 }
 
 export function Table({

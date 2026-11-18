@@ -4,7 +4,8 @@
  */
 
 export const DEFAULT_STALE_AFTER_HOURS = 24
-export const PANEL_LIMIT = 50
+/** Rows a panel keeps; the counts always cover everything */
+export const PANEL_LIMIT = 500
 
 const HOUR = 60 * 60 * 1000
 const DAY = 24 * HOUR
@@ -150,6 +151,15 @@ export function statusLabel(status: string): string {
   const words = status.replace(/-/g, ' ').trim()
 
   return words ? words.charAt(0).toUpperCase() + words.slice(1) : status
+}
+
+/** The rows on one page, with the page clamped to the list. */
+export function pageOf(count: number, page: number, pageSize: number) {
+  const pages = Math.max(1, Math.ceil(count / pageSize))
+  const current = Math.min(Math.max(page, 0), pages - 1)
+  const start = current * pageSize
+
+  return { page: current, pages, start, end: Math.min(start + pageSize, count) }
 }
 
 /** OMS and B2B Quotes store amounts in cents. */

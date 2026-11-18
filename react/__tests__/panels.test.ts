@@ -2,6 +2,7 @@ import {
   ageOf,
   fromCents,
   isStale,
+  pageOf,
   panelError,
   statusLabel,
   summarizeOnboarding,
@@ -139,5 +140,28 @@ describe('fromCents', () => {
   it('converts cents and keeps missing values missing', () => {
     expect(fromCents(123456)).toBe(1234.56)
     expect(fromCents(null)).toBeNull()
+  })
+})
+
+describe('pageOf', () => {
+  it('slices pages and clamps out-of-range pages', () => {
+    expect(pageOf(221, 0, 10)).toEqual({
+      page: 0,
+      pages: 23,
+      start: 0,
+      end: 10,
+    })
+    expect(pageOf(221, 22, 10)).toEqual({
+      page: 22,
+      pages: 23,
+      start: 220,
+      end: 221,
+    })
+    expect(pageOf(221, 99, 10).page).toBe(22)
+    expect(pageOf(23, -1, 25)).toEqual({ page: 0, pages: 1, start: 0, end: 23 })
+  })
+
+  it('handles an empty list', () => {
+    expect(pageOf(0, 3, 10)).toEqual({ page: 0, pages: 1, start: 0, end: 0 })
   })
 })

@@ -6,8 +6,14 @@ export const DEFAULT_STALE_AFTER_HOURS = 24
 const MAX_STALE_AFTER_HOURS = 720
 const HOUR = 60 * 60 * 1000
 
-/** Rows a panel returns; the totals always count everything at the source. */
-export const PANEL_LIMIT = 50
+/**
+ * Rows a panel returns; the totals always count everything at the source.
+ * The Admin page pages them 10 at a time in the browser.
+ */
+export const PANEL_LIMIT = 500
+
+/** Master Data returns at most 100 documents per call. */
+export const MASTER_DATA_PAGE = 100
 
 /**
  * Orders that are still being worked on. Finished states (invoiced, canceled)

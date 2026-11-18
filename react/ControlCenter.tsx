@@ -118,6 +118,7 @@ function ControlCenter() {
   const intl = useIntl()
   const [organizationId, setOrganizationId] = useState('')
   const [refreshKey, setRefreshKey] = useState(0)
+  const [selected, setSelected] = useState('panel-onboarding')
   const [loadedAt, setLoadedAt] = useState(() => new Date())
 
   const { data, loading, error, refetch } = useQuery<PanelsQueryData>(PANELS, {
@@ -245,47 +246,57 @@ function ControlCenter() {
         </div>
       </div>
 
-      <SummaryTiles tiles={tiles} />
+      <SummaryTiles tiles={tiles} selected={selected} onSelect={setSelected} />
 
-      <p className="t-small c-muted-1 mt0 mb5">
-        {intl.formatMessage(messages.thresholdNote, { hours: staleAfterHours })}{' '}
-        {intl.formatMessage(messages.readOnlyNote)}
+      {selected === 'panel-onboarding' && (
+        <OnboardingPanel
+          data={
+            onboarding.loading || onboarding.error
+              ? null
+              : { ...onboardingSummary, total: onboarding.total }
+          }
+          loading={onboarding.loading}
+          error={onboarding.error}
+          now={now}
+        />
+      )}
+      {selected === 'panel-requests' && (
+        <OrganizationRequestsPanel
+          data={requests}
+          loading={panelsLoading && !requests}
+          error={requestsError}
+          now={now}
+        />
+      )}
+      {selected === 'panel-orders' && (
+        <ProblemOrdersPanel
+          data={orders}
+          loading={panelsLoading}
+          error={ordersError}
+          now={now}
+        />
+      )}
+      {selected === 'panel-quotes' && (
+        <QuotesPanel
+          data={quotes}
+          loading={panelsLoading}
+          error={quotesError}
+          now={now}
+        />
+      )}
+      {selected === 'panel-credit' && (
+        <CreditHoldsPanel
+          data={credit}
+          loading={panelsLoading && !credit}
+          error={creditError}
+          now={now}
+        />
+      )}
+
+      <p className="t-small c-muted-1 mt5 mb0">
+        {intl.formatMessage(messages.readOnlyNote)}{' '}
+        {intl.formatMessage(messages.thresholdNote, { hours: staleAfterHours })}
       </p>
-
-      <OnboardingPanel
-        data={
-          onboarding.loading || onboarding.error
-            ? null
-            : { ...onboardingSummary, total: onboarding.total }
-        }
-        loading={onboarding.loading}
-        error={onboarding.error}
-        now={now}
-      />
-      <OrganizationRequestsPanel
-        data={requests}
-        loading={panelsLoading && !requests}
-        error={requestsError}
-        now={now}
-      />
-      <ProblemOrdersPanel
-        data={orders}
-        loading={panelsLoading}
-        error={ordersError}
-        now={now}
-      />
-      <QuotesPanel
-        data={quotes}
-        loading={panelsLoading}
-        error={quotesError}
-        now={now}
-      />
-      <CreditHoldsPanel
-        data={credit}
-        loading={panelsLoading && !credit}
-        error={creditError}
-        now={now}
-      />
     </Layout>
   )
 }

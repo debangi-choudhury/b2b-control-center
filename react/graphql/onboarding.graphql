@@ -1,7 +1,8 @@
 # Read by the page with the admin's session: VTEX IO doesn't let this app's
 # server call b2b-onboarding's GraphQL, which declares no policy for it.
 query ControlCenterOnboarding($page: Int) {
-  onboardingApplications(status: IN_REVIEW, page: $page, pageSize: 50) @context(provider: "logixalpartnerus.b2b-onboarding") {
+  onboardingApplications(status: IN_REVIEW, page: $page, pageSize: 50)
+    @context(provider: "logixalpartnerus.b2b-onboarding") {
     items {
       id
       reference

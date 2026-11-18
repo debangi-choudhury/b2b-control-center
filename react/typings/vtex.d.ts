@@ -57,6 +57,19 @@ declare module 'vtex.styleguide' {
     children?: ReactNode
   }>
 
+  export const Pagination: ComponentType<{
+    rowsOptions?: number[]
+    selectedOption?: number
+    currentItemFrom: number
+    currentItemTo: number
+    totalItems: number
+    textOf?: ReactNode
+    textShowRows?: ReactNode
+    onRowsChange?: (e: unknown, value: string) => void
+    onNextClick: () => void
+    onPrevClick: () => void
+  }>
+
   export const Spinner: ComponentType<{ size?: number }>
 
   export const Alert: ComponentType<{

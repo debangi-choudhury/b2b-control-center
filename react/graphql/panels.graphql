@@ -1,13 +1,16 @@
 query ControlCenterPanels($organizationId: ID) {
-  controlCenterSettings @context(provider: "logixalpartnerus.b2b-control-center") {
+  controlCenterSettings
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     staleAfterHours
   }
-  controlCenterOrganizations @context(provider: "logixalpartnerus.b2b-control-center") {
+  controlCenterOrganizations
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     id
     name
     status
   }
-  organizationRequestsPanel @context(provider: "logixalpartnerus.b2b-control-center") {
+  organizationRequestsPanel
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     total
     stale
     truncated
@@ -19,7 +22,8 @@ query ControlCenterPanels($organizationId: ID) {
       isStale
     }
   }
-  problemOrdersPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+  problemOrdersPanel(organizationId: $organizationId)
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     total
     inError
     inRetry
@@ -39,7 +43,8 @@ query ControlCenterPanels($organizationId: ID) {
       currencyCode
     }
   }
-  quotesPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+  quotesPanel(organizationId: $organizationId)
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     total
     waitingOnSeller
     waitingOnBuyer
@@ -58,7 +63,8 @@ query ControlCenterPanels($organizationId: ID) {
       isStale
     }
   }
-  creditHoldsPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+  creditHoldsPanel(organizationId: $organizationId)
+    @context(provider: "logixalpartnerus.b2b-control-center") {
     available
     total
     truncated

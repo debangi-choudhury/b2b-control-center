@@ -109,7 +109,27 @@ export const messages = defineMessages({
   ordersChecked: {
     id: 'admin/b2b-control-center.orders.checked',
     defaultMessage:
-      '{count, plural, one {# organization} other {# organizations}} checked. Workflow errors: {inError}. Retrying: {inRetry}. No change for too long: {stale}.',
+      '{count, plural, one {# organization} other {# organizations}} checked.',
+  },
+  chipErrors: {
+    id: 'admin/b2b-control-center.chip.errors',
+    defaultMessage: 'Workflow errors {count}',
+  },
+  chipRetrying: {
+    id: 'admin/b2b-control-center.chip.retrying',
+    defaultMessage: 'Retrying {count}',
+  },
+  chipNoChange: {
+    id: 'admin/b2b-control-center.chip.no-change',
+    defaultMessage: 'No change {count}',
+  },
+  chipSeller: {
+    id: 'admin/b2b-control-center.chip.seller',
+    defaultMessage: 'Seller {count}',
+  },
+  chipBuyer: {
+    id: 'admin/b2b-control-center.chip.buyer',
+    defaultMessage: 'Buyer {count}',
   },
   quotesTitle: {
     id: 'admin/b2b-control-center.quotes.title',
@@ -119,11 +139,6 @@ export const messages = defineMessages({
     id: 'admin/b2b-control-center.quotes.subtitle',
     defaultMessage:
       'Quotes waiting for the seller to answer, or for the buyer to place the order before they expire.',
-  },
-  quotesSplit: {
-    id: 'admin/b2b-control-center.quotes.split',
-    defaultMessage:
-      'Waiting for the seller: {seller}. Waiting for the buyer: {buyer}.',
   },
   quotesStoreNote: {
     id: 'admin/b2b-control-center.quotes.store-note',
@@ -160,7 +175,19 @@ export const messages = defineMessages({
   },
   showing: {
     id: 'admin/b2b-control-center.showing',
-    defaultMessage: 'Showing the {shown} oldest of {total}.',
+    defaultMessage: 'Listing the {shown} oldest of {total}.',
+  },
+  paginationOf: {
+    id: 'admin/b2b-control-center.pagination.of',
+    defaultMessage: 'of',
+  },
+  paginationRows: {
+    id: 'admin/b2b-control-center.pagination.rows',
+    defaultMessage: 'Rows per page',
+  },
+  tabsLabel: {
+    id: 'admin/b2b-control-center.tabs-label',
+    defaultMessage: 'Panels',
   },
   truncated: {
     id: 'admin/b2b-control-center.truncated',

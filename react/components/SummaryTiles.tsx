@@ -10,17 +10,34 @@ export interface TileData {
   total: number | null
   stale: number | null
   error: boolean
-  /** The panel has no source yet (credit holds before B2B-041) */
+  /** The panel has no source yet (credit holds before credit checking) */
   comingSoon?: boolean
 }
 
-/** One count per panel; each tile jumps to its panel. */
-export function SummaryTiles({ tiles }: { tiles: TileData[] }) {
+/**
+ * One count per panel. The tiles are the page's tabs: the selected one shows
+ * its panel below, so the page stays about one screen high.
+ */
+export function SummaryTiles({
+  tiles,
+  selected,
+  onSelect,
+}: {
+  tiles: TileData[]
+  selected: string
+  onSelect: (panelId: string) => void
+}) {
   const intl = useIntl()
 
   return (
-    <nav className="flex flex-wrap nl3 nr3 mb5" aria-label="Summary">
-      {tiles.map((tile) => {
+    <div
+      role="tablist"
+      aria-label={intl.formatMessage(messages.tabsLabel)}
+      className="flex flex-wrap nl3 nr3 mb5"
+    >
+      {tiles.map((tile, index) => {
+        const isSelected = tile.panelId === selected
+
         const detail = tile.error
           ? intl.formatMessage(messages.tileError)
           : tile.comingSoon
@@ -38,28 +55,48 @@ export function SummaryTiles({ tiles }: { tiles: TileData[] }) {
           : 'c-muted-1'
 
         return (
-          <a
-            key={tile.panelId}
-            href={`#${tile.panelId}`}
-            className="no-underline w-100 w-50-m w-20-l ph3 mb4"
-            onClick={(e) => {
-              // Scroll inside the Admin frame without changing its route.
-              e.preventDefault()
-              document
-                .getElementById(tile.panelId)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-          >
-            <div className="bg-base ba b--muted-4 br3 pa5 h-100 hover-b--action-primary">
-              <div className="t-small c-muted-1 mb3">{tile.label}</div>
+          <div key={tile.panelId} className="w-100 w-50-m w-20-l ph3 mb4">
+            <button
+              type="button"
+              role="tab"
+              id={`${tile.panelId}-tab`}
+              aria-selected={isSelected}
+              aria-controls={tile.panelId}
+              tabIndex={isSelected ? 0 : -1}
+              onClick={() => onSelect(tile.panelId)}
+              onKeyDown={(e) => {
+                // Arrow keys move between tabs, as in any tab list.
+                const step =
+                  e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+
+                if (!step) return
+                const next = tiles[(index + step + tiles.length) % tiles.length]
+
+                onSelect(next.panelId)
+                document.getElementById(`${next.panelId}-tab`)?.focus()
+              }}
+              className={`w-100 h-100 tl pointer br3 pa5 bg-base ${
+                isSelected
+                  ? 'ba bw1 b--action-primary'
+                  : 'ba b--muted-4 hover-b--action-primary'
+              }`}
+              style={{ font: 'inherit' }}
+            >
+              <div
+                className={`t-small mb3 ${
+                  isSelected ? 'c-action-primary b' : 'c-muted-1'
+                }`}
+              >
+                {tile.label}
+              </div>
               <div className="t-heading-2 c-on-base mb2">
                 {tile.error || tile.comingSoon ? '—' : tile.total ?? '…'}
               </div>
               <div className={`t-small ${detailColor}`}>{detail}</div>
-            </div>
-          </a>
+            </button>
+          </div>
         )
       })}
-    </nav>
+    </div>
   )
 }

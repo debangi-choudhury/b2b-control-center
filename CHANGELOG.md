@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-18
+
+### Changed
+
+- The page is about one screen high: the count tiles are now tabs, and only the selected panel shows.
+- Every panel lists 10 rows per page, with a choice of 10, 25 or 50 rows, and covers its whole list (up to 500 items) instead of the 50 oldest.
+- Problem orders and quotes show their counts as tags: workflow errors, retrying and no change; waiting for the seller and the buyer.
+- The read-only note moved to the bottom of the page.
+
 ## [0.1.1] - 2026-11-18
 
 ### Fixed

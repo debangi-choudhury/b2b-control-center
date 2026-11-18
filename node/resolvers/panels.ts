@@ -6,6 +6,7 @@ import type { OrderProblem, QuoteWaitingOn } from '../domain/rules'
 import {
   chunk,
   isStale,
+  MASTER_DATA_PAGE,
   oldestFirst,
   OPEN_ORDER_STATUSES,
   orderProblem,
@@ -218,8 +219,8 @@ export async function quotesPanel(
     })
 
   const [seller, buyer, staleSeller, staleBuyer, names] = await Promise.all([
-    search('SELLER', PANEL_LIMIT),
-    search('BUYER', PANEL_LIMIT),
+    search('SELLER', MASTER_DATA_PAGE),
+    search('BUYER', MASTER_DATA_PAGE),
     search('SELLER', 0, true),
     search('BUYER', 0, true),
     organizationNames(ctx),
@@ -261,7 +262,9 @@ export async function quotesPanel(
     waitingOnBuyer: buyer.total,
     stale: staleSeller.total + staleBuyer.total,
     items: items.slice(0, PANEL_LIMIT),
-    truncated: false,
+    // Each bucket reads one Master Data page; more than that is cut.
+    truncated:
+      seller.total > MASTER_DATA_PAGE || buyer.total > MASTER_DATA_PAGE,
   }
 }
 

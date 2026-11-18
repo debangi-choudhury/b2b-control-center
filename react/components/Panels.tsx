@@ -17,7 +17,7 @@ import type {
   ProblemOrdersPanelData,
   QuotesPanelData,
 } from '../utils/types'
-import { Cell, PanelFrame, RowLink, Table, Waiting } from './common'
+import { Cell, PanelFrame, RowLink, Table, usePaged, Waiting } from './common'
 
 interface State {
   loading: boolean
@@ -40,6 +40,7 @@ export function OnboardingPanel({
 }) {
   const intl = useIntl()
   const rows = data?.rows ?? []
+  const { pageItems, pager } = usePaged(rows)
 
   return (
     <PanelFrame
@@ -48,6 +49,7 @@ export function OnboardingPanel({
       subtitle={intl.formatMessage(messages.onboardingSubtitle)}
       loading={loading}
       error={error}
+      footer={pager}
       isEmpty={rows.length === 0}
       shown={rows.length}
       total={data?.total}
@@ -69,7 +71,7 @@ export function OnboardingPanel({
           '',
         ]}
       >
-        {rows.map((row) => (
+        {pageItems.map((row) => (
           <tr key={row.id} className="bb b--muted-5">
             <Cell>
               <code>{row.reference}</code>
@@ -103,6 +105,7 @@ export function OrganizationRequestsPanel({
 }: State & { data: OrganizationRequestsPanelData | null }) {
   const intl = useIntl()
   const items = data?.items ?? []
+  const { pageItems, pager } = usePaged(items)
 
   return (
     <PanelFrame
@@ -111,6 +114,7 @@ export function OrganizationRequestsPanel({
       subtitle={intl.formatMessage(messages.requestsSubtitle)}
       loading={loading}
       error={error}
+      footer={pager}
       isEmpty={items.length === 0}
       shown={items.length}
       total={data?.total}
@@ -125,7 +129,7 @@ export function OrganizationRequestsPanel({
           '',
         ]}
       >
-        {items.map((item) => (
+        {pageItems.map((item) => (
           <tr key={item.id} className="bb b--muted-5">
             <Cell>
               {item.name}
@@ -169,6 +173,7 @@ export function ProblemOrdersPanel({
 }: State & { data: ProblemOrdersPanelData | null }) {
   const intl = useIntl()
   const items = data?.items ?? []
+  const { pageItems, pager } = usePaged(items)
 
   return (
     <PanelFrame
@@ -177,6 +182,7 @@ export function ProblemOrdersPanel({
       subtitle={intl.formatMessage(messages.ordersSubtitle)}
       loading={loading}
       error={error}
+      footer={pager}
       isEmpty={items.length === 0}
       shown={items.length}
       total={data?.total}
@@ -185,12 +191,33 @@ export function ProblemOrdersPanel({
         data
           ? intl.formatMessage(messages.ordersChecked, {
               count: data.organizationsChecked,
-              inError: data.inError,
-              inRetry: data.inRetry,
-              stale: data.stale,
             })
           : null,
       ]}
+      chips={
+        data
+          ? [
+              {
+                type: 'error',
+                label: intl.formatMessage(messages.chipErrors, {
+                  count: data.inError,
+                }),
+              },
+              {
+                type: 'warning',
+                label: intl.formatMessage(messages.chipRetrying, {
+                  count: data.inRetry,
+                }),
+              },
+              {
+                type: 'neutral',
+                label: intl.formatMessage(messages.chipNoChange, {
+                  count: data.stale,
+                }),
+              },
+            ]
+          : []
+      }
     >
       <Table
         headers={[
@@ -202,7 +229,7 @@ export function ProblemOrdersPanel({
           intl.formatMessage(messages.colTotal),
         ]}
       >
-        {items.map((order) => {
+        {pageItems.map((order) => {
           const tag = PROBLEM_TAG[order.problem]
           const total = fromCents(order.totalValue)
 
@@ -256,6 +283,7 @@ export function QuotesPanel({
 }: State & { data: QuotesPanelData | null }) {
   const intl = useIntl()
   const items = data?.items ?? []
+  const { pageItems, pager } = usePaged(items)
 
   return (
     <PanelFrame
@@ -264,19 +292,30 @@ export function QuotesPanel({
       subtitle={intl.formatMessage(messages.quotesSubtitle)}
       loading={loading}
       error={error}
+      footer={pager}
       isEmpty={items.length === 0}
       shown={items.length}
       total={data?.total}
       truncated={data?.truncated}
-      notes={[
+      notes={[intl.formatMessage(messages.quotesStoreNote)]}
+      chips={
         data
-          ? intl.formatMessage(messages.quotesSplit, {
-              seller: data.waitingOnSeller,
-              buyer: data.waitingOnBuyer,
-            })
-          : null,
-        intl.formatMessage(messages.quotesStoreNote),
-      ]}
+          ? [
+              {
+                type: 'warning',
+                label: intl.formatMessage(messages.chipSeller, {
+                  count: data.waitingOnSeller,
+                }),
+              },
+              {
+                type: 'neutral',
+                label: intl.formatMessage(messages.chipBuyer, {
+                  count: data.waitingOnBuyer,
+                }),
+              },
+            ]
+          : []
+      }
     >
       <Table
         headers={[
@@ -289,7 +328,7 @@ export function QuotesPanel({
           '',
         ]}
       >
-        {items.map((quote) => {
+        {pageItems.map((quote) => {
           const subtotal = fromCents(quote.subtotal)
 
           return (
@@ -359,6 +398,7 @@ export function CreditHoldsPanel({
 }: State & { data: CreditHoldsPanelData | null }) {
   const intl = useIntl()
   const items = data?.items ?? []
+  const { pageItems, pager } = usePaged(items)
 
   return (
     <PanelFrame
@@ -367,6 +407,7 @@ export function CreditHoldsPanel({
       subtitle={intl.formatMessage(messages.creditSubtitle)}
       loading={loading}
       error={error}
+      footer={pager}
       isEmpty={items.length === 0}
       emptyText={
         data && !data.available
@@ -385,7 +426,7 @@ export function CreditHoldsPanel({
           intl.formatMessage(messages.colTotal),
         ]}
       >
-        {items.map((hold) => (
+        {pageItems.map((hold) => (
           <tr key={hold.orderId} className="bb b--muted-5">
             <Cell>
               <RowLink href={orderLink(hold.orderId)}>
