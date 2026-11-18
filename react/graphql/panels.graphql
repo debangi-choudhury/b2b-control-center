@@ -1,0 +1,75 @@
+query ControlCenterPanels($organizationId: ID) {
+  controlCenterSettings @context(provider: "logixalpartnerus.b2b-control-center") {
+    staleAfterHours
+  }
+  controlCenterOrganizations @context(provider: "logixalpartnerus.b2b-control-center") {
+    id
+    name
+    status
+  }
+  organizationRequestsPanel @context(provider: "logixalpartnerus.b2b-control-center") {
+    total
+    stale
+    truncated
+    items {
+      id
+      name
+      tradeName
+      created
+      isStale
+    }
+  }
+  problemOrdersPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+    total
+    inError
+    inRetry
+    stale
+    organizationsChecked
+    truncated
+    items {
+      orderId
+      organizationId
+      organizationName
+      status
+      statusDescription
+      problem
+      creationDate
+      lastChange
+      totalValue
+      currencyCode
+    }
+  }
+  quotesPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+    total
+    waitingOnSeller
+    waitingOnBuyer
+    stale
+    truncated
+    items {
+      id
+      referenceName
+      status
+      waitingOn
+      organizationId
+      organizationName
+      lastUpdate
+      expirationDate
+      subtotal
+      isStale
+    }
+  }
+  creditHoldsPanel(organizationId: $organizationId) @context(provider: "logixalpartnerus.b2b-control-center") {
+    available
+    total
+    truncated
+    items {
+      orderId
+      organizationId
+      organizationName
+      amount
+      heldSince
+      reason
+      isStale
+    }
+  }
+}

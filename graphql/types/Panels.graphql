@@ -78,8 +78,8 @@ type QuoteItem {
   creationDate: String
   lastUpdate: String!
   expirationDate: String
-  "In cents, as B2B Quotes stores it"
-  subtotal: Int
+  "In cents, as B2B Quotes stores it; some quotes hold fractions of a cent"
+  subtotal: Float
   viewedBySales: Boolean
   isStale: Boolean!
 }
