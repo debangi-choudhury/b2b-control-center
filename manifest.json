@@ -1,0 +1,50 @@
+{
+  "vendor": "logixalpartnerus",
+  "name": "b2b-control-center",
+  "version": "0.1.0",
+  "title": "B2B Control Center",
+  "description": "One Admin screen for everything waiting on someone in B2B: onboarding applications, organization requests, problem orders, quotes and credit holds",
+  "builders": {
+    "node": "7.x",
+    "graphql": "2.x",
+    "docs": "0.x"
+  },
+  "dependencies": {
+    "vtex.b2b-organizations-graphql": "2.x",
+    "logixalpartnerus.b2b-onboarding": "0.x"
+  },
+  "policies": [
+    {
+      "name": "vtex.b2b-organizations-graphql:resolve-graphql"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/oms/pvt/orders"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "portal.vtexcommercestable.com.br",
+        "path": "/api/dataentities/quotes/search"
+      }
+    }
+  ],
+  "settingsSchema": {
+    "title": "B2B Control Center",
+    "type": "object",
+    "properties": {
+      "staleAfterHours": {
+        "title": "Waiting too long after (hours)",
+        "description": "An item counts as waiting too long when nothing has happened to it for this many hours. Applies to every panel.",
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 720,
+        "default": 24
+      }
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
+}

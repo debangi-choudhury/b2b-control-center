@@ -1,0 +1,113 @@
+type OrganizationOption {
+  id: ID!
+  name: String!
+  status: String
+}
+
+type ControlCenterSettings {
+  staleAfterHours: Int!
+}
+
+# Every panel has the same frame: total is the full count at the source,
+# items holds at most 50 rows (oldest waiting first), and truncated is true
+# when the app stopped reading before the end of the source, so the counts
+# may be low.
+
+type OrganizationRequestItem {
+  id: ID!
+  name: String!
+  tradeName: String
+  created: String!
+  isStale: Boolean!
+}
+
+type OrganizationRequestsPanel {
+  total: Int!
+  stale: Int!
+  items: [OrganizationRequestItem!]!
+  truncated: Boolean!
+}
+
+enum OrderProblem {
+  "OMS reports the workflow in an error state"
+  WORKFLOW_ERROR
+  "OMS is retrying a failed workflow step"
+  WORKFLOW_RETRY
+  "Open, and unchanged for longer than the threshold"
+  STALE
+}
+
+type ProblemOrderItem {
+  orderId: ID!
+  organizationId: ID!
+  organizationName: String
+  status: String!
+  statusDescription: String
+  problem: OrderProblem!
+  creationDate: String!
+  lastChange: String!
+  "In cents, as OMS returns it"
+  totalValue: Int!
+  currencyCode: String
+}
+
+type ProblemOrdersPanel {
+  total: Int!
+  inError: Int!
+  inRetry: Int!
+  stale: Int!
+  items: [ProblemOrderItem!]!
+  organizationsChecked: Int!
+  truncated: Boolean!
+}
+
+enum QuoteWaitingOn {
+  "pending or revised: the seller has to answer"
+  SELLER
+  "ready and not expired: the buyer can place the order"
+  BUYER
+}
+
+type QuoteItem {
+  id: ID!
+  referenceName: String
+  status: String!
+  waitingOn: QuoteWaitingOn!
+  organizationId: ID
+  organizationName: String
+  creationDate: String
+  lastUpdate: String!
+  expirationDate: String
+  "In cents, as B2B Quotes stores it"
+  subtotal: Int
+  viewedBySales: Boolean
+  isStale: Boolean!
+}
+
+type QuotesPanel {
+  total: Int!
+  waitingOnSeller: Int!
+  waitingOnBuyer: Int!
+  stale: Int!
+  items: [QuoteItem!]!
+  truncated: Boolean!
+}
+
+type CreditHoldItem {
+  orderId: ID!
+  organizationId: ID!
+  organizationName: String
+  "In cents"
+  amount: Int!
+  heldSince: String!
+  reason: String
+  isStale: Boolean!
+}
+
+type CreditHoldsPanel {
+  "False until B2B-041 is installed; the page then explains the empty panel"
+  available: Boolean!
+  total: Int!
+  items: [CreditHoldItem!]!
+  truncated: Boolean!
+}
