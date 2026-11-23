@@ -1,4 +1,4 @@
-import { JanusClient } from '@vtex/api'
+import { MasterData } from '@vtex/api'
 import type { InstanceOptions, IOContext } from '@vtex/api'
 
 import { adminHeaders } from './adminToken'
@@ -32,7 +32,14 @@ const ENTITY = 'quotes'
 const SCHEMA = 'v1.3'
 
 /**
- * B2B Quotes' Master Data entity, read as the Admin user.
+ * Most rows one call returns. Master Data serves at most 100 per call, and
+ * @vtex/api's client asks for pageSize + 1 (its REST-Range end is inclusive).
+ */
+export const QUOTES_PAGE_SIZE = 99
+
+/**
+ * B2B Quotes' Master Data entity, read as the Admin user through @vtex/api's
+ * MasterData client (the vtex-io-masterdata skill: no direct REST calls).
  *
  * B2B Quotes' own getQuotes query takes its rights from the shopper's
  * storefront session, so it returns null for Admin users (both 2.9.3 and
@@ -40,51 +47,42 @@ const SCHEMA = 'v1.3'
  * path. Only this client knows the entity, so it can switch to GraphQL if
  * VTEX adds an Admin query. It never writes.
  *
- * Master Data returns 15 documents unless REST-Range is set, so every call
- * sets it and reads the total from REST-Content-Range.
+ * The client sends the app token by default; the Admin user's token replaces
+ * it here, so Master Data applies that user's own rights.
  */
-export class QuotesMasterData extends JanusClient {
+export class QuotesMasterData extends MasterData {
   constructor(ctx: IOContext, options?: InstanceOptions) {
     super(ctx, {
       ...options,
-      headers: { ...options?.headers, Accept: 'application/json' },
+      headers: { ...options?.headers, ...adminHeaders(ctx) },
     })
   }
 
-  public async search(input: {
+  /** A page of matching quotes and the full count. size 0 counts only. */
+  public async find(input: {
     where: string
     sort: string
     size: number
   }): Promise<{ data: QuoteDocument[]; total: number }> {
-    // Master Data refuses resources=0-0, so a count-only call (size 0) still
-    // asks for two rows and drops them.
-    const to = Math.max(input.size, 2) - 1
+    // A size of 1 asks Master Data for rows 0-1, the smallest range it takes.
+    const pageSize = Math.min(Math.max(input.size, 1), QUOTES_PAGE_SIZE)
 
-    const response = await this.http
-      .getRaw<QuoteDocument[]>(`/api/dataentities/${ENTITY}/search`, {
-        params: {
-          _fields: FIELDS.join(','),
-          _where: input.where,
-          _sort: input.sort,
-          _schema: SCHEMA,
-        },
-        headers: {
-          ...adminHeaders(this.context),
-          'REST-Range': `resources=0-${to}`,
-        },
-        metric: 'quotes-md-search',
-      })
-      .catch((e) => {
-        throw sourceError('Quotes (Master Data)', e)
-      })
-
-    // REST-Content-Range: resources 0-49/52
-    const range = String(response.headers['rest-content-range'] ?? '')
-    const total = range.includes('/') ? Number(range.split('/')[1]) : NaN
+    const result = await this.searchDocumentsWithPaginationInfo<QuoteDocument>({
+      dataEntity: ENTITY,
+      fields: FIELDS,
+      where: input.where,
+      sort: input.sort,
+      schema: SCHEMA,
+      pagination: { page: 1, pageSize },
+    }).catch((e) => {
+      throw sourceError('Quotes (Master Data)', e)
+    })
 
     return {
-      data: input.size === 0 ? [] : response.data,
-      total: Number.isNaN(total) ? response.data.length : total,
+      data: input.size === 0 ? [] : result.data.slice(0, pageSize),
+      total: Number.isNaN(result.pagination.total)
+        ? result.data.length
+        : result.pagination.total,
     }
   }
 }

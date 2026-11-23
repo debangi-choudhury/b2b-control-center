@@ -1,12 +1,12 @@
 import type { OmsListOrder } from '../clients/oms'
 import { OMS_PAGE_SIZE } from '../clients/oms'
 import type { QuoteDocument } from '../clients/quotes'
+import { QUOTES_PAGE_SIZE } from '../clients/quotes'
 import { mapLimit } from '../domain/concurrency'
 import type { OrderProblem, QuoteWaitingOn } from '../domain/rules'
 import {
   chunk,
   isStale,
-  MASTER_DATA_PAGE,
   oldestFirst,
   OPEN_ORDER_STATUSES,
   orderProblem,
@@ -207,7 +207,7 @@ export async function quotesPanel(
   const limit = await cutoff(ctx)
 
   const search = (waitingOn: QuoteWaitingOn, size: number, stale = false) =>
-    ctx.clients.quotes.search({
+    ctx.clients.quotes.find({
       where: waitingQuotesWhere({
         waitingOn,
         now,
@@ -219,8 +219,8 @@ export async function quotesPanel(
     })
 
   const [seller, buyer, staleSeller, staleBuyer, names] = await Promise.all([
-    search('SELLER', MASTER_DATA_PAGE),
-    search('BUYER', MASTER_DATA_PAGE),
+    search('SELLER', QUOTES_PAGE_SIZE),
+    search('BUYER', QUOTES_PAGE_SIZE),
     search('SELLER', 0, true),
     search('BUYER', 0, true),
     organizationNames(ctx),
@@ -264,7 +264,7 @@ export async function quotesPanel(
     items: items.slice(0, PANEL_LIMIT),
     // Each bucket reads one Master Data page; more than that is cut.
     truncated:
-      seller.total > MASTER_DATA_PAGE || buyer.total > MASTER_DATA_PAGE,
+      seller.total > QUOTES_PAGE_SIZE || buyer.total > QUOTES_PAGE_SIZE,
   }
 }
 

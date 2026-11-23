@@ -19,11 +19,12 @@ import {
 const clients: ClientsConfig<Clients> = {
   implementation: Clients,
   options: {
-    // Read-only calls, so one retry is safe. Every source has a timeout, so
-    // a slow one fails its own panel instead of holding the page.
+    // Read-only calls, so retrying is safe. Every source has a short timeout
+    // (the vtex-io-client-integration skill suggests 1 to 3 seconds), so a
+    // slow one fails its own panel instead of holding the page.
     default: {
-      retries: 1,
-      timeout: 8000,
+      retries: 2,
+      timeout: 3000,
     },
   },
 }

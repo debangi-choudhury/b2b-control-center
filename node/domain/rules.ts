@@ -12,9 +12,6 @@ const HOUR = 60 * 60 * 1000
  */
 export const PANEL_LIMIT = 500
 
-/** Master Data returns at most 100 documents per call. */
-export const MASTER_DATA_PAGE = 100
-
 /**
  * Orders that are still being worked on. Finished states (invoiced, canceled)
  * are left out: a workflow error there no longer blocks the customer.
