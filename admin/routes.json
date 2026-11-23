@@ -1,0 +1,6 @@
+{
+  "admin.app.b2b-control-center": {
+    "component": "ControlCenter",
+    "path": "/admin/app/b2b-control-center"
+  }
+}

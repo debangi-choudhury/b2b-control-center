@@ -1,0 +1,52 @@
+# One query per panel. The onboarding panel is the exception: VTEX IO only
+# lets an app call another app's GraphQL when the target declares a policy,
+# and b2b-onboarding declares none, so the Admin page reads it directly with
+# the admin's session, as B2B-C11's own review queue does.
+#
+# Otherwise, one query per panel. The Admin page asks for all of them in one request;
+# GraphQL resolves them in parallel, and a source that fails returns an error
+# on its own field only, so the other panels still show.
+#
+# The dashboard only reads. Every source is called with the Admin user's own
+# token, so each one applies its own permissions on top of the check below:
+# the same License Manager right as VTEX's B2B Organizations screens
+# (product 97, "Buyer Organizations", Buyer Organization View).
+#
+# organizationId narrows the panels that belong to an organization (orders,
+# quotes, credit holds). Onboarding applications and organization requests
+# come before an organization exists, so they ignore it.
+#
+# The fields are nullable on purpose: a panel whose source fails comes back
+# null with its own error, instead of failing the whole response.
+
+type Query {
+  "Organizations for the filter, with names for the panels"
+  controlCenterOrganizations: [OrganizationOption!]
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+
+  "Settings the panels use, from app settings"
+  controlCenterSettings: ControlCenterSettings
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+
+  "VTEX's native organization requests still pending, oldest first"
+  organizationRequestsPanel: OrganizationRequestsPanel
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+
+  "B2B orders in a workflow error or retry, or open and unchanged for too long"
+  problemOrdersPanel(organizationId: ID): ProblemOrdersPanel
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+
+  "B2B quotes waiting for the seller or the buyer"
+  quotesPanel(organizationId: ID): QuotesPanel
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+
+  "Orders held for credit. Empty until B2B-041 exists."
+  creditHoldsPanel(organizationId: ID): CreditHoldsPanel
+    @auth(scope: PRIVATE, productCode: "97", resourceCode: "buyer_organization_view")
+    @cacheControl(scope: PRIVATE)
+}
