@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-23
+
 ### Changed
 
 - Quotes are read through `@vtex/api`'s MasterData client instead of direct REST calls, still with the Admin user's token (review against https://github.com/vtex/skills, `vtex-io-masterdata`). The outbound rule now names that client's host, `api.vtex.com`.
