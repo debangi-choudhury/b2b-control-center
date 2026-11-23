@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+- Quotes are read through `@vtex/api`'s MasterData client instead of direct REST calls, still with the Admin user's token (review against https://github.com/vtex/skills, `vtex-io-masterdata`). The outbound rule now names that client's host, `api.vtex.com`.
+- Calls to VTEX time out after 3 seconds instead of 8, with up to two retries; all of them only read (`vtex-io-client-integration`, `vtex-io-application-performance`).
+
 ## [0.2.0] - 2026-11-18
 
 ### Changed

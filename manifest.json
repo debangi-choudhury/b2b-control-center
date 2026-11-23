@@ -32,7 +32,7 @@
     {
       "name": "outbound-access",
       "attrs": {
-        "host": "portal.vtexcommercestable.com.br",
+        "host": "api.vtex.com",
         "path": "/api/dataentities/quotes/search"
       }
     }
