@@ -43,7 +43,7 @@ export const QUOTES_PAGE_SIZE = 99
  *
  * B2B Quotes' own getQuotes query takes its rights from the shopper's
  * storefront session, so it returns null for Admin users (both 2.9.3 and
- * 4.1.0, tested in the B2B-C15 spike). Reading the entity is the only Admin
+ * 4.1.0, tested on 2026-11-18). Reading the entity is the only Admin
  * path. Only this client knows the entity, so it can switch to GraphQL if
  * VTEX adds an Admin query. It never writes.
  *

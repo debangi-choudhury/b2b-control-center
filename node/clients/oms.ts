@@ -27,7 +27,7 @@ export const OMS_PAGE_SIZE = 100
 /**
  * The OMS order list (GET /api/oms/pvt/orders), read as the Admin user.
  *
- * Tested in the B2B-C15 spike: f_UtmCampaign matches the organization ID that
+ * Tested on 2026-11-18: f_UtmCampaign matches the organization ID that
  * B2B orders carry in marketingData.utmCampaign, and comma-separated values in
  * f_UtmCampaign and f_status are ORed. There's no filter for workflow errors;
  * each row carries workflowInErrorState and workflowInRetry instead.

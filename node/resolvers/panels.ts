@@ -269,7 +269,7 @@ export async function quotesPanel(
 }
 
 /**
- * Credit holds come from B2B-041, which doesn't exist yet. The panel already
+ * Credit holds would come from a credit hold app, which doesn't exist yet. The panel already
  * has its final shape so the page can show it, empty and labeled.
  */
 export async function creditHoldsPanel(_: unknown, args: OrganizationArgs) {
