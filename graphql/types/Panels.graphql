@@ -105,7 +105,7 @@ type CreditHoldItem {
 }
 
 type CreditHoldsPanel {
-  "False until B2B-041 is installed; the page then explains the empty panel"
+  "False until a credit hold app is installed; the page then explains the empty panel"
   available: Boolean!
   total: Int!
   items: [CreditHoldItem!]!
