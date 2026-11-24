@@ -16,3 +16,6 @@
 **/__mocks__
 **/*.test.*
 react/testUtils/**
+
+# screenshots for the GitHub README
+docs/images/
