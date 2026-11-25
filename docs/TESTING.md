@@ -20,9 +20,10 @@ Reviewed against the VTEX IO track of https://github.com/vtex/skills. Version 0.
 
 ```bash
 yarn lint                        # 0 errors, 1 warning
-yarn test                        # 36 tests
+yarn test                        # 52 tests, including the panel resolvers
 cd react && npx tsc --noEmit     # no errors
 cd node && npx tsc --noEmit      # no errors
+cd node/__tests__ && npx tsc --noEmit -p .   # no errors (the tests)
 ```
 
 ## What was tested, and how
